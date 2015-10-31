@@ -8,4 +8,6 @@ setup(name='PyAutomata',
       author_email='aadilzbhatti@gmail.com',
       license='',
       packages=['PyAutomata'],
-      zip_safe=False)
+      zip_safe=False,
+      test_suite='nose.collector',
+      tests_require=['nose'])

@@ -92,16 +92,6 @@ class DFA:
 	def start_state(self, state):
 		self.replace_state(self.start, state)
 
-
-d = DFA()
-d.add_alphabet([1, 0])
-d.add_states(['q1', 'reject', 'accept'])
-d.add_accepting_state('accept')
-d.add_transition('q0', 1, 'q1')
-d.add_transition('q1', 1, 'accept')
-d.add_self_transition('q0', 0)
-d.add_transition('q1', 0, 'q0')
-d.self_transition_all('accept')
-d.self_transition_all('reject')
-
-print(d)
+# TODO cannot have more than one transition with same symbol
+# TODO cannot have epsilon moves
+# TODO accepting strings
