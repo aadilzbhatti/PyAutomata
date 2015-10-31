@@ -33,7 +33,8 @@ class DFA:
 			self.add_state(state)
 
 	def add_transition(self, state, symbol, output):
-		self.transition[state][symbol] = output
+		if not self.transition[state][symbol]:
+			self.transition[state][symbol] = output
 
 	def add_self_transition(self, state, symbol):
 		self.transition[state][symbol] = state
@@ -91,7 +92,4 @@ class DFA:
 	def start_state(self, state):
 		self.replace_state(self.start, state)
 
-# TODO cannot have more than one transition with same symbol
-# TODO cannot have epsilon moves
 # TODO accepting strings
-# TODO testing

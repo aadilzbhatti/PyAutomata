@@ -127,3 +127,19 @@ class TestDFA(TestCase):
 		d.add_state('newstate')
 		for i in len(d.sigma):
 			self.assertEqual(d.sigma[i] in d.transition['newstate'], True)
+
+	"""
+	Conserving determinism tests
+	"""
+	def test_no_more_than_one_transition_with_same_symbol(self):
+		d = pa.DFA()
+		d.add_states('q1', 'q2')
+		d.add_alphabet(1, 0)
+		d.add_transition('q1', 1, 'q2')
+		d.add_self_transition('q1', 0)
+		d.add_transition('q2', 0, 'q1')
+		d.add_self_transition('q2', 1)
+		d.add_state('q3')
+		old_transition = d.transition['q2']
+		d.add_transition('q2', 1, 'q3')
+		self.assertEqual(d.transition['q2'], old_transition)
