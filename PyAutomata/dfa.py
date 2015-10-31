@@ -37,8 +37,7 @@ class DFA:
 		self.transition[state][symbol] = output
 
 	def add_self_transition(self, state, symbol):
-		for i in self.sigma:
-			self.transition[state][i] = state
+		self.transition[state][symbol] = state
 
 	def add_symbol(self, symbol):
 		self.sigma.append(symbol)
@@ -46,6 +45,9 @@ class DFA:
 	def add_alphabet(self, alphabet):
 		for symbol in alphabet:
 			self.add_symbol(symbol)
+		for state in self.states:
+			for symbol in alphabet:
+				self.add_transition(state, symbol, '')
 
 	def add_accepting_state(self, state):
 		self.accepting.append(state)
@@ -58,23 +60,48 @@ class DFA:
 		self.add_self_transition(self.reject, 0)
 
 	def self_transition_all(self, state):
-		for symbol in alphabet:
+		for symbol in self.sigma:
 			self.add_self_transition(state, symbol)
+
+	def remove_state(self, state):
+		self.states.remove(state)
+		del self.transition[state]
+		if state in self.accepting:
+			self.accepting.remove(state)
+
+	def replace_state(self, old, new):
+		try:
+			index = self.states.index(old)
+		except ValueError:
+			print('Invalid state')
+		try:
+			old_transition = self.transition[old]
+		except KeyError:
+			print('Invalid state')
+			return
+		for i in self.transition.keys():
+			for j in self.sigma:
+				if self.transition[i][j] == old:
+					self.transition[i][j] = new
+		self.remove_state(old)
+		self.states.append(new)
+		self.transition[new] = old_transition
+		if self.start == old:
+			self.start = new
+
+	def start_state(self, state):
+		self.replace_state(self.start, state)
+
 
 d = DFA()
 d.add_alphabet([1, 0])
-
 d.add_states(['q1', 'reject', 'accept'])
-
 d.add_accepting_state('accept')
-
 d.add_transition('q0', 1, 'q1')
 d.add_transition('q1', 1, 'accept')
 d.add_self_transition('q0', 0)
 d.add_transition('q1', 0, 'q0')
-d.add_self_transition('accept', 1)
-d.add_self_transition('accept', 0)
-d.add_self_transition('reject', 1)
-d.add_self_transition('reject', 0)
+d.self_transition_all('accept')
+d.self_transition_all('reject')
 
 print(d)
