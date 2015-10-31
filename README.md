@@ -1,0 +1,1 @@
+PyAutomata is a Python package which allows for the creation of finite-state automata for which to model state problems. 
