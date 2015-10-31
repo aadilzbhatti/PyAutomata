@@ -26,11 +26,10 @@ class DFA:
 			self.states.append(state)
 			self.transition[state] = {}
 			for i in range(len(self.sigma)):
-				for j in range(len(self.states)):
-					self.transition[self.states[j]][self.sigma[i]] = ''
+				self.transition[state][self.sigma[i]] = ''
 
-	def add_states(self, states):
-		for state in states:
+	def add_states(self, *args):
+		for state in args:
 			self.add_state(state)
 
 	def add_transition(self, state, symbol, output):
@@ -39,15 +38,19 @@ class DFA:
 	def add_self_transition(self, state, symbol):
 		self.transition[state][symbol] = state
 
-	def add_symbol(self, symbol):
-		self.sigma.append(symbol)
+	def self_transition_all(self, state):
+		for symbol in self.sigma:
+			self.add_self_transition(state, symbol)
 
-	def add_alphabet(self, alphabet):
-		for symbol in alphabet:
+	def add_symbol(self, symbol):
+		if symbol not in self.sigma:
+			self.sigma.append(symbol)
+		for i in range(len(self.states)):
+			self.transition[self.states[i]][symbol] = ''
+
+	def add_alphabet(self, *args):
+		for symbol in args:
 			self.add_symbol(symbol)
-		for state in self.states:
-			for symbol in alphabet:
-				self.add_transition(state, symbol, '')
 
 	def add_accepting_state(self, state):
 		self.accepting.append(state)
@@ -58,10 +61,6 @@ class DFA:
 		self.reject = state
 		self.add_self_transition(self.reject, 1)
 		self.add_self_transition(self.reject, 0)
-
-	def self_transition_all(self, state):
-		for symbol in self.sigma:
-			self.add_self_transition(state, symbol)
 
 	def remove_state(self, state):
 		self.states.remove(state)
@@ -95,3 +94,4 @@ class DFA:
 # TODO cannot have more than one transition with same symbol
 # TODO cannot have epsilon moves
 # TODO accepting strings
+# TODO testing
