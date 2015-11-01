@@ -143,3 +143,44 @@ class TestDFA(TestCase):
 		old_transition = d.transition['q2']
 		d.add_transition('q2', 1, 'q3')
 		self.assertEqual(d.transition['q2'], old_transition)
+
+	"""
+	Testing if strings are accepted by DFA
+	"""
+	def test_string_in_DFA(self):
+		d = pa.DFA()
+		d.add_alphabet(1, 0)
+		d.add_states('A', 'BEF', 'CF', 'DF', 'F', 'B', 'C', 'D')
+		d.add_accepting_state('A')
+		d.add_accepting_state('BEF')
+		d.add_accepting_state('DF')
+		d.add_accepting_state('F')
+		d.add_accepting_state('D')
+		d.add_accepting_state('CF')
+		d.start_state('A')
+		d.add_reject_state('ø')
+		d.add_transition('A', 0, 'ø')
+		d.add_transition('A', 1, 'BEF')
+		d.add_transition('BEF', 1, 'ø')
+		d.add_transition('BEF', 0, 'CF')
+		d.add_transition('CF', 1, 'ø')
+		d.add_transition('CF', 0, 'DF')
+		d.add_transition('DF', 0, 'F')
+		d.add_transition('DF', 1, 'B')
+		d.add_transition('F', 1, 'ø')
+		d.add_self_transition('F', 0)
+		d.add_transition('B', 1, 'ø')
+		d.add_transition('B', 0, 'C')
+		d.add_transition('C', 1, 'ø')
+		d.add_transition('C', 0, 'D')
+		d.add_transition('D', 0, 'ø')
+		d.add_transition('D', 1, 'B') # should construct a DFA which accepts (100)* + 10*
+		test_strings = [
+			'100' * 100,
+			'1' + '0' * 100,
+			'1',
+			'',
+		]
+		for string in test_strings:
+			print(string)
+			self.assertEqual(d.parse(string), True)

@@ -33,21 +33,24 @@ class DFA:
 			self.add_state(state)
 
 	def add_transition(self, state, symbol, output):
+		symbol = str(symbol)
 		if not self.transition[state][symbol]:
 			self.transition[state][symbol] = output
 
 	def add_self_transition(self, state, symbol):
-		self.transition[state][symbol] = state
+		symbol = str(symbol)
+		self.add_transition(state, symbol, state)
 
 	def self_transition_all(self, state):
 		for symbol in self.sigma:
 			self.add_self_transition(state, symbol)
 
 	def add_symbol(self, symbol):
+		symbol = str(symbol)
 		if symbol not in self.sigma:
 			self.sigma.append(symbol)
-		for i in range(len(self.states)):
-			self.transition[self.states[i]][symbol] = ''
+			for i in range(len(self.states)):
+				self.transition[self.states[i]][symbol] = ''
 
 	def add_alphabet(self, *args):
 		for symbol in args:
@@ -60,8 +63,7 @@ class DFA:
 	def add_reject_state(self, state='reject'):
 		self.add_state(state)
 		self.reject = state
-		self.add_self_transition(self.reject, 1)
-		self.add_self_transition(self.reject, 0)
+		self.self_transition_all(state)
 
 	def remove_state(self, state):
 		self.states.remove(state)
@@ -84,7 +86,8 @@ class DFA:
 				if self.transition[i][j] == old:
 					self.transition[i][j] = new
 		self.remove_state(old)
-		self.states.append(new)
+		if new not in self.states:
+			self.states.append(new)
 		self.transition[new] = old_transition
 		if self.start == old:
 			self.start = new
@@ -92,4 +95,43 @@ class DFA:
 	def start_state(self, state):
 		self.replace_state(self.start, state)
 
+	def parse(self, string):
+		curr = self.start
+		if not string:
+			return self.start in self.accepting
+		for i in range(len(string)):
+			ch = string[i]
+			if ch not in self.sigma:
+				return False
+			curr = d.transition[curr][ch]
+		return curr in self.accepting
+
 # TODO accepting strings
+d = DFA()
+d.add_alphabet(1, 0)
+d.add_states('A', 'BEF', 'CF', 'DF', 'F', 'B', 'C', 'D')
+d.add_accepting_state('A')
+d.add_accepting_state('BEF')
+d.add_accepting_state('DF')
+d.add_accepting_state('F')
+d.add_accepting_state('D')
+d.add_accepting_state('CF')
+d.start_state('A')
+d.add_reject_state('ø')
+d.add_transition('A', 0, 'ø')
+d.add_transition('A', 1, 'BEF')
+d.add_transition('BEF', 1, 'ø')
+d.add_transition('BEF', 0, 'CF')
+d.add_transition('CF', 1, 'ø')
+d.add_transition('CF', 0, 'DF')
+d.add_transition('DF', 0, 'F')
+d.add_transition('DF', 1, 'B')
+d.add_transition('F', 1, 'ø')
+d.add_self_transition('F', 0)
+d.add_transition('B', 1, 'ø')
+d.add_transition('B', 0, 'C')
+d.add_transition('C', 1, 'ø')
+d.add_transition('C', 0, 'D')
+d.add_transition('D', 0, 'ø')
+d.add_transition('D', 1, 'B')
+print(d)
