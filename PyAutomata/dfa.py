@@ -95,7 +95,7 @@ class DFA:
 	def start_state(self, state):
 		self.replace_state(self.start, state)
 
-	def parse(self, string):
+	def parse(self, string=''):
 		curr = self.start
 		if not string:
 			return self.start in self.accepting
@@ -103,35 +103,5 @@ class DFA:
 			ch = string[i]
 			if ch not in self.sigma:
 				return False
-			curr = d.transition[curr][ch]
+			curr = self.transition[curr][ch]
 		return curr in self.accepting
-
-# TODO accepting strings
-d = DFA()
-d.add_alphabet(1, 0)
-d.add_states('A', 'BEF', 'CF', 'DF', 'F', 'B', 'C', 'D')
-d.add_accepting_state('A')
-d.add_accepting_state('BEF')
-d.add_accepting_state('DF')
-d.add_accepting_state('F')
-d.add_accepting_state('D')
-d.add_accepting_state('CF')
-d.start_state('A')
-d.add_reject_state('ø')
-d.add_transition('A', 0, 'ø')
-d.add_transition('A', 1, 'BEF')
-d.add_transition('BEF', 1, 'ø')
-d.add_transition('BEF', 0, 'CF')
-d.add_transition('CF', 1, 'ø')
-d.add_transition('CF', 0, 'DF')
-d.add_transition('DF', 0, 'F')
-d.add_transition('DF', 1, 'B')
-d.add_transition('F', 1, 'ø')
-d.add_self_transition('F', 0)
-d.add_transition('B', 1, 'ø')
-d.add_transition('B', 0, 'C')
-d.add_transition('C', 1, 'ø')
-d.add_transition('C', 0, 'D')
-d.add_transition('D', 0, 'ø')
-d.add_transition('D', 1, 'B')
-print(d)
